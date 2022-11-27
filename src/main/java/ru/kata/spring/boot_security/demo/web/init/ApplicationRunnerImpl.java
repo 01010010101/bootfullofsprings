@@ -6,6 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import ru.kata.spring.boot_security.demo.web.model.Role;
 import ru.kata.spring.boot_security.demo.web.model.User;
+import ru.kata.spring.boot_security.demo.web.service.RoleService;
 import ru.kata.spring.boot_security.demo.web.service.UserService;
 
 import java.util.HashSet;
@@ -40,9 +41,8 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
             Set<Role> userRole = new HashSet<>();
             adminRole.add(admin);
             userRole.add(user);
-            userService.saveNewUser(new User( "Adolph", passwordEncoder.encode("admin"), adminRole ));
-            userService.saveNewUser(new User( "Dima", passwordEncoder.encode("user"), userRole ));
-
+            userService.saveNewUser(new User("thirdreichfromthesun@outlook.com", "Adolph", "Fuhrer", passwordEncoder.encode("admin"), adminRole ));
+            userService.saveNewUser(new User( "damspace@yandex.ru", "DimaTerminator", "Wannabe", passwordEncoder.encode("user"), userRole ));
         }
     }
 }

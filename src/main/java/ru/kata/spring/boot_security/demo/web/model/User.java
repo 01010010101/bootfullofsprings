@@ -55,8 +55,11 @@ public class User implements UserDetails {
     public void setOccupation(String occupation) {
         this.occupation = occupation;
     }
-    public Set<Role> getRoles() {
+    public Set <Role> getRoles() {
         return roles;
+    }
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
     @Override
     public boolean equals(Object o) {

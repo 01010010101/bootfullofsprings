@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.web.controller;
 
+import jakarta.persistence.Id;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -19,7 +20,6 @@ import java.util.Set;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-
 
     private UserServiceImp userService;
 
@@ -64,23 +64,23 @@ public class AdminController {
 
 
     @GetMapping (value = "/edit/{id}")
-    public String editUser(Model model, @PathVariable("id") Long id) {
+    public String editUser(Model model, @PathVariable("id") int id) {
         User user = userService.getUserById(id);
         model.addAttribute("user", user);
         return "edit";
     }
     @PatchMapping (value = "/edit/{id}")
-    public String userUpdate(@ModelAttribute("user") User user) {
+    public String userUpdate(@ModelAttribute("user") int id, User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.editUser(user);
+        userService.updateUserById(id, user);
         return "redirect:/admin/allUsers";
     }
 
 
 
     @DeleteMapping ("{id}")
-    public String delete(@PathVariable("id") Long id){
-        userService.deleteUser(id);
+    public String delete(@PathVariable("id") int id){
+        userService.deleteUserById(id);
         return "redirect:/admin/allUsers";
     }
 }
