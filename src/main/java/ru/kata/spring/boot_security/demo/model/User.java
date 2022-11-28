@@ -16,7 +16,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String email;
-    private String nickname;
+    private String username;
     private String occupation;
     private String password;
 
@@ -26,9 +26,9 @@ public class User implements UserDetails {
     private Set<Role> roles = new HashSet<>();
     public User() {
     }
-    public User(String email, String nickname, String occupation, String password, Set<Role> roles) {
+    public User(String email, String username, String occupation, String password, Set<Role> roles) {
         this.email = email;
-        this.nickname = nickname;
+        this.username = username;
         this.occupation = occupation;
         this.password = password;
         this.roles = roles;
@@ -41,11 +41,8 @@ public class User implements UserDetails {
     }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
-    public String getNickname() {
-        return nickname;
-    }
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setUsername(String username) {
+        this.username = username;
     }
     public String getOccupation() {
         return occupation;
@@ -64,11 +61,11 @@ public class User implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id && Objects.equals(email, user.email) && Objects.equals(nickname, user.nickname) && Objects.equals(occupation, user.occupation)&& Objects.equals(password, user.password)&& Objects.equals(roles, user.roles);
+        return id == user.id && Objects.equals(email, user.email) && Objects.equals(username, user.username) && Objects.equals(occupation, user.occupation)&& Objects.equals(password, user.password)&& Objects.equals(roles, user.roles);
     }
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, nickname, occupation, password, roles);
+        return Objects.hash(id, email, username, occupation, password, roles);
     }
 
     @Override
