@@ -1,73 +1,85 @@
 package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.repositories.UserRepository;
+import ru.kata.spring.boot_security.demo.repositories.UserRepositories;
 
-
-import javax.transaction.Transactional;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-@Transactional
-public class UserServiceImp implements UserService {
-    private final UserRepository repository;
+@Transactional(readOnly = true)
+public class UserServiceImp implements UserDetailsService, UserService {
+
+    private final UserRepositories userRepositories;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImp(UserRepository repository) {
-        this.repository = repository;
+    public UserServiceImp(UserRepositories userRepositories, @Lazy PasswordEncoder passwordEncoder) {
+        this.userRepositories = userRepositories;
+        this.passwordEncoder = passwordEncoder;
     }
-    @Override
+
+
+    @Transactional
+    public void updateUser(int id, User user) {
+        user.setId(id);
+        userRepositories.save(user);
+    }
+
+
+    @Transactional
+    public User getUserAtId(Integer id) {
+        Optional<User> findUser = userRepositories.findById(id);
+        return findUser.orElse(null);
+    }
+
+    @Transactional
+    public void saveUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepositories.save(user);
+    }
+    //i'm doing this piece of shit for 4th times god have mercy
+    @Transactional
+    public void removeUserById(Integer id) {
+        userRepositories.delete(getUserAtId(id));
+    }
+
+    @Transactional
     public List<User> getAllUsers() {
-        return repository.findAll();
+        return userRepositories.findAll();
     }
 
-    @Override
     @Transactional
-    public void deleteUserById(int id) {
-        repository.deleteById(id);
+    public User findByName(String name) {
+        return userRepositories.findByName(name);
     }
 
-    @Override
-    @Transactional
-    public void saveNewUser(User user) {
-        user.setPassword(PasswordEncoder().encode(user.getPassword()));
-        user.addRole(Role.USER);
-        repository.save(user);
-    }
 
     @Override
-    @Transactional
-    public void updateUserById(int id, User updatedUser) {
-
-    }
-
-    @Override
-    @Transactional
-    public User getUserById(int id) {
-        return repository.findById(id).get();
-    }
-
-    @Override
-    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        User user = findByName(username);
+        if(user==null) {
+            throw new UsernameNotFoundException(String.format("User '%s' not found", username));
+        }
+        return new org.springframework.security.core.userdetails.User(user.getUsername(),
+                user.getPassword(), mapRolesToAuthorities(user.getRoles()));
+
     }
-    @Override
-    @Transactional
-    public void makeAdmin(User user) {
-        user.addRole(Role.ADMIN);
-        repository.save(user);
-    }
-    @Bean
-    public PasswordEncoder PasswordEncoder() {
-        return new BCryptPasswordEncoder();
+
+    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
+        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getRole())).collect(Collectors.toList());
     }
 }
