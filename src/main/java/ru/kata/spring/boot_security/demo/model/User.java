@@ -21,7 +21,10 @@ public class User implements UserDetails {
     private String name;
 
     @Column
-    private String occupation;
+    private String surname;
+
+    @Column
+    private String age;
 
     @Column
     private String email;
@@ -46,10 +49,11 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String name, String occupation, String age, String password) {
+    public User(String name, String surname, String age, String email, String password) {
         this.name = name;
-        this.occupation = occupation;
-        this.email = age;
+        this.surname = surname;
+        this.age = age;
+        this.email = email;
         this.password = password;
     }
 
@@ -69,20 +73,28 @@ public class User implements UserDetails {
         this.name = name;
     }
 
-    public String getOccupation() {
-        return occupation;
+    public String getSurname() {
+        return surname;
     }
 
-    public void setOccupation(String surname) {
-        this.occupation = surname;
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String age) {
-        this.email = age;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setPassword(String password) {
