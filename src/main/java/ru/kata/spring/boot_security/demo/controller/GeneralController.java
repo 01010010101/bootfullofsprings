@@ -69,7 +69,7 @@ public class GeneralController {
         return "redirect:/admin/";
     }
 
-    @PatchMapping("/admin/{id}")
+    @PostMapping("/admin/{id}")
     public String update(@ModelAttribute("user") User user, @PathVariable("id") int id) {
         userService.updateUser(id, user);
 

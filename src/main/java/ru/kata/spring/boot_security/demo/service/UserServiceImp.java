@@ -21,7 +21,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 public class UserServiceImp implements UserDetailsService, UserService {
 
     private final UserRepositories userRepositories;
@@ -34,6 +33,7 @@ public class UserServiceImp implements UserDetailsService, UserService {
     }
 
 
+    @Transactional
     public void updateUser(int id, User user) {
         user.setId(id);
         userRepositories.save(user);
@@ -46,12 +46,14 @@ public class UserServiceImp implements UserDetailsService, UserService {
     }
 
 
+    @Transactional
     public void saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepositories.save(user);
     }
-    //I'm doing this piece of shit for 6th times, for fuck's sake
+    //I'm doing this piece of shit for 7th times, a lil' bit more and i'm quit
 
+    @Transactional
     public void removeUserById(Integer id) {
         userRepositories.delete(getUserAtId(id));
     }
@@ -68,7 +70,6 @@ public class UserServiceImp implements UserDetailsService, UserService {
 
 
     @Override
-    //ни черта не понял что с ним нужно сделать
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = findByName(username);
         if(user==null) {
